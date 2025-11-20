@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Tech Hub - Sàn Thương Mại Công Nghệ Đỉnh Cao</title>
+    <!-- Tải Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Thiết lập font Inter cho toàn bộ trang */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb; /* Nền trắng xám nhẹ */
+        }
+        /* Custom class cho hiệu ứng hover sản phẩm */
+        .product-card {
+            transition: all 0.3s ease;
+        }
+        .product-card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transform: translateY(-4px);
+        }
+        /* Hiệu ứng mờ cho Modal */
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Thanh điều hướng (Header) -->
+    <header class="bg-white shadow-lg sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-extrabold text-blue-600 tracking-wider">
+                E-Tech Hub
+            </a>
+            <nav class="hidden md:flex space-x-6 items-center">
+                <a href="#san-pham-noi-bat" class="text-gray-600 hover:text-blue-600 font-medium transition duration-150">Sản phẩm</a>
+                <a href="#tin-tuc" class="text-gray-600 hover:text-blue-600 font-medium transition duration-150">Tin tức</a>
+                <a href="#ho-tro" class="text-gray-600 hover:text-blue-600 font-medium transition duration-150">Hỗ trợ</a>
+                <!-- Nút Giỏ hàng đã được tích hợp icon -->
+                <button class="bg-blue-600 text-white text-sm font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-300 flex items-center space-x-1">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    <span>Giỏ hàng (<span id="cart-count">0</span>)</span>
+                </button>
+            </nav>
+            <button id="menu-button" class="md:hidden text-gray-600 hover:text-blue-600 focus:outline-none">
+                <!-- Icon menu (Sử dụng SVG) -->
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+        </div>
+        <!-- Menu di động -->
+        <div id="mobile-menu" class="hidden md:hidden px-4 pt-2 pb-4 space-y-2 bg-white border-t">
+            <a href="#san-pham-noi-bat" class="block text-gray-700 hover:bg-blue-50 px-3 py-2 rounded-md transition duration-150">Sản phẩm</a>
+            <a href="#tin-tuc" class="block text-gray-700 hover:bg-blue-50 px-3 py-2 rounded-md transition duration-150">Tin tức</a>
+            <a href="#ho-tro" class="block text-gray-700 hover:bg-blue-50 px-3 py-2 rounded-md transition duration-150">Hỗ trợ</a>
+            <button class="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition duration-300">
+                Giỏ hàng (<span id="cart-count-mobile">0</span>)
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <!-- Phần Chính (Hero Section) -->
+        <section class="bg-gradient-to-br from-blue-600 to-indigo-700 text-white py-20 sm:py-28">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold mb-4 leading-tight">
+                    Công nghệ Đỉnh cao, Giá trị Thực
+                </h1>
+                <p class="text-xl sm:text-2xl font-light mb-10 opacity-90 max-w-4xl mx-auto">
+                    Khám phá hàng ngàn sản phẩm công nghệ mới nhất từ các thương hiệu uy tín toàn cầu.
+                </p>
+                <div class="flex justify-center">
+                    <div class="relative w-full max-w-xl">
+                        <input type="text" id="search-input" placeholder="Tìm kiếm sản phẩm, thương hiệu..." 
+                               class="w-full p-4 pl-12 rounded-full border-2 border-transparent text-gray-800 focus:outline-none focus:ring-4 focus:ring-blue-300 transition duration-300 shadow-xl"
+                               aria-label="Thanh tìm kiếm sản phẩm">
+                        <!-- Icon tìm kiếm (Sử dụng SVG) -->
+                        <svg class="w-6 h-6 absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Phần Sản phẩm Nổi bật -->
+        <section id="san-pham-noi-bat" class="py-16 sm:py-24 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl sm:text-4xl font-bold text-center text-gray-800 mb-8">
+                    Sản phẩm Nổi bật trong Tuần
+                </h2>
+                
+                <!-- Thanh Lọc & Sắp xếp -->
+                <div class="flex flex-col md:flex-row justify-between items-center mb-12 space-y-4 md:space-y-0 p-4 bg-gray-50 rounded-lg shadow-inner">
+                    <!-- Lọc theo Thương hiệu -->
+                    <div class="w-full md:w-auto">
+                        <label for="brand-filter" class="block text-sm font-medium text-gray-700 mb-1">Lọc theo Thương hiệu</label>
+                        <select id="brand-filter" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm">
+                            <option value="all">Tất cả Thương hiệu</option>
+                            <!-- Options will be populated by JS -->
+                        </select>
+                    </div>
+
+                    <!-- Sắp xếp -->
+                    <div class="w-full md:w-auto">
+                        <label for="sort-by" class="block text-sm font-medium text-gray-700 mb-1">Sắp xếp theo</label>
+                        <select id="sort-by" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm">
+                            <option value="default">Mặc định (ID)</option>
+                            <option value="price-asc">Giá tăng dần</option>
+                            <option value="price-desc">Giá giảm dần</option>
+                            <option value="rating-desc">Đánh giá cao nhất</option>
+                            <option value="name-asc">Tên (A-Z)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Lưới Sản phẩm (Product Grid) - Nội dung được tạo bằng JS -->
+                <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <!-- Products will be dynamically inserted here -->
+                </div>
+                
+                <div class="text-center mt-12">
+                    <button class="inline-block bg-blue-500 text-white font-semibold py-3 px-8 rounded-full shadow-lg hover:bg-blue-600 transition duration-300 transform hover:scale-105">
+                        Tải thêm Sản phẩm &rarr;
+                    </button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Phần Tin tức Công nghệ (Tin tức) -->
+        <section id="tin-tuc" class="py-16 sm:py-24 bg-gray-100">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">
+                    Tin tức & Khuyến mãi
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Bài viết 1 -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                        <div class="p-6">
+                            <span class="inline-block bg-pink-100 text-pink-800 text-xs font-medium px-2.5 py-0.5 rounded-full mb-3">Khuyến mãi</span>
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">Giảm giá 30% toàn bộ phụ kiện máy tính!</h3>
+                            <p class="text-gray-600 text-sm mb-4">Cơ hội vàng để nâng cấp chuột, bàn phím và webcam của bạn với giá ưu đãi lớn.</p>
+                            <a href="#" class="text-blue-600 hover:text-blue-800 font-semibold text-sm">Đọc thêm &rarr;</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Bài viết 2 -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                        <div class="p-6">
+                            <span class="inline-block bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full mb-3">Tin tức</span>
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">Ra mắt Chip AI thế hệ mới: Nhanh hơn 50%</h3>
+                            <p class="text-gray-600 text-sm mb-4">Tìm hiểu về những đột phá mới nhất trong ngành công nghiệp bán dẫn và ứng dụng AI.</p>
+                            <a href="#" class="text-blue-600 hover:text-blue-800 font-semibold text-sm">Đọc thêm &rarr;</a>
+                        </div>
+                    </div>
+
+                    <!-- Bài viết 3 -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                        <div class="p-6">
+                            <span class="inline-block bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded-full mb-3">Review</span>
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">Đánh giá SmartWatch Gen X: Có đáng mua?</h3>
+                            <p class="text-gray-600 text-sm mb-4">Bài đánh giá chi tiết về các tính năng, pin và thiết kế của mẫu đồng hồ thông minh mới nhất.</p>
+                            <a href="#" class="text-blue-600 hover:text-blue-800 font-semibold text-sm">Đọc thêm &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Phần Kêu gọi Hành động (CTA) -->
+        <section id="ho-tro" class="bg-blue-500 py-16">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="text-3xl font-bold text-white mb-4">
+                    Cần Hỗ trợ?
+                </h2>
+                <p class="text-blue-100 mb-8 max-w-2xl mx-auto">
+                    Đội ngũ hỗ trợ khách hàng của chúng tôi luôn sẵn sàng 24/7 để giải đáp mọi thắc mắc của bạn.
+                </p>
+                
+                <a href="mailto:support@etechhub.vn" class="inline-block bg-white text-blue-600 font-semibold py-3 px-8 rounded-full shadow-lg hover:bg-gray-100 transition duration-300 transform hover:scale-105">
+                    Gửi Yêu cầu Hỗ trợ
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal Chi tiết Sản phẩm (Product Detail Modal) -->
+    <div id="product-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay" onclick="closeModal(event)">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden transform transition-all duration-300" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center p-6 border-b">
+                <h2 id="modal-product-name" class="text-2xl font-bold text-gray-900"></h2>
+                <button onclick="document.getElementById('product-modal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Cột hình ảnh -->
+                <div>
+                    <img id="modal-product-image" src="" alt="Product Image" class="w-full h-auto rounded-xl object-cover border border-gray-200" onerror="this.src='https://placehold.co/600x400/cccccc/333333?text=Hình+ảnh'">
+                </div>
+                <!-- Cột chi tiết -->
+                <div>
+                    <p id="modal-product-brand" class="text-sm font-semibold text-blue-600 mb-2"></p>
+                    <div id="modal-product-rating" class="flex items-center mb-3">
+                        <!-- Rating stars will be inserted here -->
+                    </div>
+                    <p id="modal-product-price" class="text-3xl font-extrabold text-red-600 mb-4"></p>
+                    <p id="modal-product-description" class="text-gray-700 mb-6"></p>
+                    
+                    <button class="w-full bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:bg-blue-700 transition duration-300 flex items-center justify-center space-x-2" onclick="addToCartModal(this.getAttribute('data-product-id'))">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span>Thêm vào Giỏ hàng</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Kết thúc Modal -->
+
+    <!-- Phần Chân trang (Footer) -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <!-- Cột 1: Logo & Thông tin -->
+                <div>
+                    <h3 class="text-xl font-bold mb-4 text-blue-400">E-Tech Hub</h3>
+                    <p class="text-gray-400 text-sm">
+                        Địa chỉ: Tầng 10, Tòa nhà E-Commerce, Hà Nội.
+                    </p>
+                </div>
+                <!-- Cột 2: Danh mục -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Danh mục</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="text-gray-400 hover:text-blue-400 transition duration-150">Máy tính & Laptop</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-blue-400 transition duration-150">Thiết bị Di động</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-blue-400 transition duration-150">Phụ kiện</a></li>
+                    </ul>
+                </div>
+                <!-- Cột 3: Chính sách -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Chính sách</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="text-gray-400 hover:text-blue-400 transition duration-150">Quy định Đổi trả</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-blue-400 transition duration-150">Chính sách Bảo mật</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-blue-400 transition duration-150">Điều khoản Dịch vụ</a></li>
+                    </ul>
+                </div>
+                <!-- Cột 4: Theo dõi -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Theo dõi</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-blue-400 transition duration-150" aria-label="Facebook">
+                            <!-- Icon Facebook (Sử dụng SVG) -->
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.77l-.44 2.89h-2.33v6.987C18.343 21.128 22 16.991 22 12z"/></svg>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-blue-400 transition duration-150" aria-label="Instagram">
+                            <!-- Icon Instagram (Sử dụng SVG) -->
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 16c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6zm4.5-10.5c-.74 0-1.35-.61-1.35-1.35s.61-1.35 1.35-1.35 1.35.61 1.35 1.35-.61 1.35-1.35 1.35z"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 pt-8 border-t border-gray-700 text-center">
+                <p class="text-sm text-gray-500">&copy; 2025 E-Tech Hub. Bảo lưu mọi quyền.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // --- Dữ liệu Sản phẩm Mẫu (NƠI BẠN CẬP NHẬT) ---
+        // Mỗi đối tượng là một sản phẩm
+        const products = [
+            { id: 1, name: "Laptop Siêu Mỏng Z5", brand: "TechPro", price: 19990000, rating: 4.5, description: "Mỏng nhẹ, hiệu năng cao với chip thế hệ mới. Màn hình 4K OLED, thời lượng pin cả ngày.", imageUrl: "https://placehold.co/600x400/3b82f6/ffffff?text=Laptop+Z5" },
+            { id: 2, name: "Tai nghe ANC-Pro", brand: "AudioSense", price: 2500000, rating: 4.8, description: "Công nghệ chống ồn chủ động hàng đầu, pin 40 giờ. Âm thanh Hi-Res rõ nét và bass mạnh mẽ.", imageUrl: "https://placehold.co/600x400/10b981/ffffff?text=Tai+Nghe" },
+            { id: 3, name: "SmartWatch Gen X", brand: "Chronos", price: 5890000, rating: 4.2, description: "Đồng hồ thông minh đa năng, theo dõi sức khỏe 24/7 (nhịp tim, SpO2). Thiết kế sang trọng.", imageUrl: "https://placehold.co/600x400/f59e0b/ffffff?text=SmartWatch" },
+            { id: 4, name: "Game Console 5K", brand: "PlayVerse", price: 12000000, rating: 4.9, description: "Trải nghiệm game 5K mượt mà, tốc độ khung hình 120fps. Bộ điều khiển cảm ứng tiên tiến.", imageUrl: "https://placehold.co/600x400/ef4444/ffffff?text=Console" },
+            { id: 5, name: "Máy ảnh Mirrorless A10", brand: "PhotoCorp", price: 35000000, rating: 4.7, description: "Cảm biến Full-Frame 60MP, quay video 8K. Lấy nét tự động cực nhanh, lý tưởng cho dân chuyên nghiệp.", imageUrl: "https://placehold.co/600x400/6366f1/ffffff?text=Máy+Ảnh" },
+            { id: 6, name: "Sạc dự phòng 20000mAh", brand: "TechPro", price: 800000, rating: 3.9, description: "Sạc nhanh 65W, dung lượng lớn 20000mAh. Thiết kế vỏ nhôm bền bỉ, an toàn.", imageUrl: "https://placehold.co/600x400/4ade80/ffffff?text=Sạc+Dự+Phòng" },
+            { id: 7, name: "Bàn phím Cơ TKL", brand: "AudioSense", price: 1250000, rating: 4.6, description: "Bàn phím cơ Tenkeyless, switch Gateron Pro, đèn RGB tùy chỉnh.", imageUrl: "https://placehold.co/600x400/f97316/ffffff?text=Bàn+Phím" },
+            { id: 8, name: "Màn hình Cong 32 inch", brand: "Chronos", price: 8500000, rating: 4.1, description: "Màn hình gaming 32 inch cong, tần số quét 144Hz. Độ phân giải QHD.", imageUrl: "https://placehold.co/600x400/a855f7/ffffff?text=Màn+Hình" },
+        ];
+
+        let filteredProducts = [...products];
+        let cart = [];
+
+        // --- Hàm Tiện ích ---
+
+        // Hàm định dạng tiền tệ
+        function formatCurrency(number) {
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(number);
+        }
+
+        // Hàm tạo SVG đánh giá sao
+        function createRatingStars(rating) {
+            const maxRating = 5;
+            let starsHtml = '';
+            // Chuẩn hóa rating thành số float
+            const actualRating = parseFloat(rating);
+
+            for (let i = 1; i <= maxRating; i++) {
+                let colorClass = 'text-gray-300'; // Sao rỗng (mặc định)
+                
+                if (i <= actualRating) {
+                    colorClass = 'text-yellow-400'; // Sao đầy
+                }
+                
+                starsHtml += `
+                    <svg class="w-4 h-4 ${colorClass}" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.82 2.05a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.82-2.05a1 1 0 00-1.175 0l-2.82 2.05c-.786.57-1.84-.197-1.54-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.82-2.05c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                `;
+            }
+            return `<div class="flex items-center space-x-0.5">${starsHtml} <span class="text-xs text-gray-500 ml-1">(${actualRating}/5)</span></div>`;
+        }
+
+        // --- Chức năng chính: Render Sản phẩm ---
+        function renderProducts(productsToRender) {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = ''; // Xóa sản phẩm cũ
+
+            if (productsToRender.length === 0) {
+                grid.innerHTML = '<p class="col-span-full text-center text-gray-500 text-lg p-10">Không tìm thấy sản phẩm nào phù hợp với tiêu chí của bạn.</p>';
+                return;
+            }
+
+            productsToRender.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card bg-white rounded-xl overflow-hidden shadow-lg border border-gray-100 cursor-pointer';
+                productCard.setAttribute('data-product-id', product.id);
+                productCard.innerHTML = `
+                    <img src="${product.imageUrl}" alt="${product.name}" 
+                         class="w-full h-48 object-cover object-center bg-gray-50 transition duration-300 hover:opacity-90"
+                         onerror="this.src='https://placehold.co/600x400/cccccc/333333?text=Hình+ảnh'">
+                    <div class="p-5">
+                        <h3 class="text-lg font-bold text-gray-900 mb-1 truncate">${product.name}</h3>
+                        <p class="text-sm text-gray-500 mb-2">Thương hiệu: ${product.brand}</p>
+                        ${createRatingStars(product.rating)}
+                        <div class="flex items-center justify-between mt-3">
+                            <span class="text-xl font-extrabold text-red-600">
+                                ${formatCurrency(product.price)}
+                            </span>
+                            <button data-product-id="${product.id}" class="text-blue-600 hover:text-blue-800 transition duration-150 font-semibold text-sm focus:outline-none" onclick="event.stopPropagation(); showProductModal(${product.id});">
+                                Chi tiết &rarr;
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                // Mở modal khi click vào toàn bộ card
+                productCard.addEventListener('click', () => showProductModal(product.id));
+
+                grid.appendChild(productCard);
+            });
+        }
+
+        // --- Chức năng Lọc & Sắp xếp ---
+
+        // Khởi tạo bộ lọc thương hiệu
+        function initializeFilters() {
+            // Lấy danh sách thương hiệu duy nhất
+            const brandSet = new Set(products.map(p => p.brand));
+            const brandFilter = document.getElementById('brand-filter');
+            
+            // Thêm các tùy chọn thương hiệu vào select box
+            brandSet.forEach(brand => {
+                const option = document.createElement('option');
+                option.value = brand;
+                option.textContent = brand;
+                brandFilter.appendChild(option);
+            });
+
+            // Lắng nghe sự kiện thay đổi
+            document.getElementById('brand-filter').addEventListener('change', applyFiltersAndSort);
+            document.getElementById('sort-by').addEventListener('change', applyFiltersAndSort);
+            document.getElementById('search-input').addEventListener('input', applyFiltersAndSort);
+        }
+
+        function applyFiltersAndSort() {
+            let currentProducts = [...products];
+
+            // 1. Lọc theo Thương hiệu
+            const selectedBrand = document.getElementById('brand-filter').value;
+            if (selectedBrand !== 'all') {
+                currentProducts = currentProducts.filter(p => p.brand === selectedBrand);
+            }
+
+            // 2. Lọc theo Tìm kiếm
+            const searchQuery = document.getElementById('search-input').value.toLowerCase().trim();
+            if (searchQuery) {
+                currentProducts = currentProducts.filter(p => 
+                    p.name.toLowerCase().includes(searchQuery) || 
+                    p.brand.toLowerCase().includes(searchQuery)
+                );
+            }
+
+            // 3. Sắp xếp
+            const sortBy = document.getElementById('sort-by').value;
+            currentProducts.sort((a, b) => {
+                switch (sortBy) {
+                    case 'price-asc':
+                        return a.price - b.price;
+                    case 'price-desc':
+                        return b.price - a.price;
+                    case 'rating-desc':
+                        return b.rating - a.rating;
+                    case 'name-asc':
+                        return a.name.localeCompare(b.name);
+                    case 'default':
+                    default:
+                        return a.id - b.id;
+                }
+            });
+
+            filteredProducts = currentProducts;
+            renderProducts(filteredProducts);
+        }
+
+        // --- Chức năng Modal Chi tiết Sản phẩm ---
+
+        function showProductModal(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            // Đổ dữ liệu vào Modal
+            document.getElementById('modal-product-name').textContent = product.name;
+            document.getElementById('modal-product-image').src = product.imageUrl;
+            document.getElementById('modal-product-brand').textContent = `Thương hiệu: ${product.brand}`;
+            document.getElementById('modal-product-price').textContent = formatCurrency(product.price);
+            document.getElementById('modal-product-description').textContent = product.description;
+            
+            // Đổ dữ liệu Rating
+            document.getElementById('modal-product-rating').innerHTML = createRatingStars(product.rating);
+            
+            // Cập nhật ID sản phẩm cho nút Thêm vào giỏ hàng trong modal
+            document.querySelector('.modal-overlay button.bg-blue-600').setAttribute('data-product-id', product.id);
+
+            // Hiển thị Modal
+            document.getElementById('product-modal').classList.remove('hidden');
+        }
+
+        function closeModal(event) {
+            // Đóng modal khi click ra ngoài overlay
+            if (event.target.id === 'product-modal') {
+                document.getElementById('product-modal').classList.add('hidden');
+            }
+        }
+        
+        // --- Chức năng Giỏ hàng (Giả lập) ---
+
+        function updateCartCount() {
+            const count = cart.length;
+            document.getElementById('cart-count').textContent = count;
+            document.getElementById('cart-count-mobile').textContent = count;
+        }
+
+        function addToCartModal(productId) {
+            const id = parseInt(productId);
+            const product = products.find(p => p.id === id);
+            if (product) {
+                cart.push(product);
+                updateCartCount();
+                // Thông báo đơn giản (sử dụng console thay vì alert)
+                console.log(`Đã thêm "${product.name}" vào giỏ hàng.`);
+                
+                // Ẩn modal sau khi thêm
+                document.getElementById('product-modal').classList.add('hidden');
+            }
+        }
+
+        // --- Chức năng menu di động ---
+        document.getElementById('menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // --- Khởi tạo khi tải trang ---
+        window.onload = function() {
+            initializeFilters();
+            // Ban đầu hiển thị tất cả sản phẩm
+            renderProducts(products);
+            updateCartCount(); // Khởi tạo số lượng giỏ hàng
+        };
+
+    </script>
+
+</body>
+</html>
